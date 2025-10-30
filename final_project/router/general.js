@@ -58,6 +58,30 @@ public_users.get('/isbn/:isbn',function (req, res) {
   }
   return res.send(JSON.stringify(book, null, 4));
  });
+
+// Get book details by ISBN using Promise callbacks with Axios
+public_users.get('/isbn-promise/:isbn', function (req, res) {
+  const { isbn } = req.params;
+  axios
+    .get(`http://localhost:5001/isbn/${isbn}`)
+    .then((response) => {
+      return res.send(response.data);
+    })
+    .catch((error) => {
+      return res.status(500).json({ message: 'Failed to fetch book by ISBN', error: error.message });
+    });
+});
+
+// Get book details by ISBN using async/await with Axios
+public_users.get('/isbn-async/:isbn', async function (req, res) {
+  const { isbn } = req.params;
+  try {
+    const response = await axios.get(`http://localhost:5001/isbn/${isbn}`);
+    return res.send(response.data);
+  } catch (error) {
+    return res.status(500).json({ message: 'Failed to fetch book by ISBN', error: error.message });
+  }
+});
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
@@ -74,6 +98,30 @@ public_users.get('/author/:author',function (req, res) {
     return res.status(404).json({ message: "No books found for the given author" });
   }
   return res.send(JSON.stringify(matches, null, 4));
+});
+
+// Get books by author using Promise callbacks with Axios
+public_users.get('/author-promise/:author', function (req, res) {
+  const { author } = req.params;
+  axios
+    .get(`http://localhost:5001/author/${encodeURIComponent(author)}`)
+    .then((response) => {
+      return res.send(response.data);
+    })
+    .catch((error) => {
+      return res.status(500).json({ message: 'Failed to fetch books by author', error: error.message });
+    });
+});
+
+// Get books by author using async/await with Axios
+public_users.get('/author-async/:author', async function (req, res) {
+  const { author } = req.params;
+  try {
+    const response = await axios.get(`http://localhost:5001/author/${encodeURIComponent(author)}`);
+    return res.send(response.data);
+  } catch (error) {
+    return res.status(500).json({ message: 'Failed to fetch books by author', error: error.message });
+  }
 });
 
 // Get all books based on title
