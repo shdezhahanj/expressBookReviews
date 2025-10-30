@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
@@ -24,6 +25,28 @@ public_users.post("/register", (req,res) => {
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
   return res.send(JSON.stringify(books, null, 4));
+});
+
+// Get book list using Promise callbacks with Axios
+public_users.get('/books-promise', function (req, res) {
+  axios
+    .get('http://localhost:5001/')
+    .then((response) => {
+      return res.send(response.data);
+    })
+    .catch((error) => {
+      return res.status(500).json({ message: 'Failed to fetch books', error: error.message });
+    });
+});
+
+// Get book list using async/await with Axios
+public_users.get('/books-async', async function (req, res) {
+  try {
+    const response = await axios.get('http://localhost:5001/');
+    return res.send(response.data);
+  } catch (error) {
+    return res.status(500).json({ message: 'Failed to fetch books', error: error.message });
+  }
 });
 
 // Get book details based on ISBN
