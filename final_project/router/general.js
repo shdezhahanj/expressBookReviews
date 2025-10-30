@@ -141,6 +141,30 @@ public_users.get('/title/:title',function (req, res) {
   return res.send(JSON.stringify(matches, null, 4));
 });
 
+// Get books by title using Promise callbacks with Axios
+public_users.get('/title-promise/:title', function (req, res) {
+  const { title } = req.params;
+  axios
+    .get(`http://localhost:5001/title/${encodeURIComponent(title)}`)
+    .then((response) => {
+      return res.send(response.data);
+    })
+    .catch((error) => {
+      return res.status(500).json({ message: 'Failed to fetch books by title', error: error.message });
+    });
+});
+
+// Get books by title using async/await with Axios
+public_users.get('/title-async/:title', async function (req, res) {
+  const { title } = req.params;
+  try {
+    const response = await axios.get(`http://localhost:5001/title/${encodeURIComponent(title)}`);
+    return res.send(response.data);
+  } catch (error) {
+    return res.status(500).json({ message: 'Failed to fetch books by title', error: error.message });
+  }
+});
+
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
   const { isbn } = req.params;
